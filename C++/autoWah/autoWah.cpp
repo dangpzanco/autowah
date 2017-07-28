@@ -3,9 +3,12 @@
 
 
 autoWah::autoWah() : 
-	yLowpass(0.0f), yBandpass(0.0f), yHighpass(0.0f), yFilter(&yBandpass),
-	minFreq(0), maxFreq(0), fc(0)
+	yLowpass(0.0f), yBandpass(0.0f), yHighpass(0.0f), 
+	yFilter(&yBandpass), q(0.2f), f(0.0f), fs(44.1e3)
 {
+	autoWah::setAttack(40e-3);
+	autoWah::setRelease(2e-3);
+	autoWah::setMinMaxFreq(20, 2500);
 }
 
 
@@ -20,14 +23,15 @@ float autoWah::runEffect(float x)
 
 	float yL = levelDetector(xL);
 
-	fc = yL * (maxFreq - minFreq) + minFreq;
-	f = 2 * std::sin(pi*fc / fs);
+	//fc = yL * (maxFreq - minFreq) + minFreq;
+	//f = 2 * std::sin(pi*fc / fs);
+	
 
-	float xF = fc;
-	float yF = stateVariableFilter(xF);
+	f = 2.0f * autoWah::sin(yL * freqBandwidth + minFreq);
+	//f = 2.0f * std::sin(yL * freqBandwidth + minFreq);
 
-
-	return yF;
+	return stateVariableFilter(x);
+	//return f;
 }
 
 void autoWah::setFilterType(FilterType type)
@@ -43,6 +47,34 @@ void autoWah::setFilterType(FilterType type)
 		yFilter = &yHighpass;
 		break;
 	}
+}
+
+void autoWah::setAttack(float tauA)
+{
+	autoWah::alphaA = std::exp(-1.0 / (tauA*fs));
+	autoWah::betaA = 1.0f - autoWah::alphaA;
+}
+
+void autoWah::setRelease(float tauR)
+{
+	autoWah::alphaR = std::exp(-1.0 / (tauR*fs));
+	autoWah::betaR = 1.0f - autoWah::alphaR;
+}
+
+void autoWah::setMinMaxFreq(float minFreq, float maxFreq)
+{
+	autoWah::freqBandwidth = pi*(2.0f*maxFreq - minFreq)/fs;
+	autoWah::minFreq = pi*minFreq/fs;
+}
+
+void autoWah::setSampleRate(float fs)
+{
+	autoWah::fs = fs;
+}
+
+void autoWah::setQualityFactor(float Q)
+{
+	autoWah::q = Q;
 }
 
 float autoWah::levelDetector(float x)
@@ -66,4 +98,19 @@ float autoWah::stateVariableFilter(float x)
 	yLowpass  += f * yBandpass;
 
 	return *yFilter;
+}
+
+float autoWah::sin(float x)
+{
+	static float factor3 = -1.0f / 6.0f;
+	return x * (1.0f + factor3*x*x);
+}
+
+float autoWah::precisionSin(float x)
+{
+	static float factor3 = -1.0f / 6.0f;
+	static float factor5 = 1.0f / 120.0f;
+	float x2 = x*x;
+	float x4 = x2*x2;
+	return x*(1.0f + factor3*x2 + factor5*x4);
 }
