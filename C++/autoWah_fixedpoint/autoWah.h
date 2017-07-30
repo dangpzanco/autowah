@@ -2,6 +2,9 @@
 
 #include <cmath>
 #include <cstdint>
+#include "Fp32f.hpp"
+
+#define FP32Q 16
 
 const double pi = 3.1415926535897932;
 

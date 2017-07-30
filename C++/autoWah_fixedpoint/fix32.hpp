@@ -1,14 +1,3 @@
-//!
-//! @file 				Fp32f.hpp
-//! @author 			Geoffrey Hunter <gbmhunter@gmail.com> (www.mbedded.ninja), Markus Trenkwalder
-//! @edited 			n/a
-//! @created			2012-10-23
-//! @last-modified		2015-01-26
-//! @brief 				Fast 32-bit fixed point library.
-//! @details
-//!		See README.rst in root dir for more info.
-
-
 /* Original copyright notice
 Copyright (c) 2007, Markus Trenkwalder
 
@@ -48,7 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef FP32F_H
 #define FP32F_H
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace Fp
 {
@@ -66,7 +55,7 @@ namespace Fp
 
 	//! @brief		Perform a fixed point multiplication using a 64-bit intermediate result to
 	//! 			prevent intermediary overflow problems.
-	//! @note 		Slower than Fp32f::FixMulF()
+	//! @note 		Slower than fix32::FixMulF()
 	template <uint8_t q>
 	inline int32_t FixMul(int32_t a, int32_t b)
 	{
@@ -185,54 +174,48 @@ namespace Fp
 	{
 		return (int32_t)(f * (double)(1 << q));
 	}
-	
-	
 
-	int32_t fixcos16(int32_t a);
-	int32_t fixsin16(int32_t a);
-	int32_t fixrsqrt16(int32_t a);
-	int32_t fixsqrt16(int32_t a);
-
-	//! The template argument p in all of the following functions refers to the 
+	//! The template argument q in all of the following functions refers to the 
 	//! fixed point precision (e.g. q = 8 gives 24.8 fixed point functions).
 	//! Contains mathematical operator overloading. Doesn't have modulus (%) overloading
 	template <uint8_t q>
-	class Fp32f {
+	class fix32 {
 		
 		public:
 		
 		//! @brief		The fixed-point number is stored in this basic data type.
 		int32_t rawVal;
 		
-		Fp32f()
+		fix32()
 		{
 		}
 		
-		Fp32f(int8_t i) :
+		fix32(int8_t i) :
 			rawVal((int32_t)i << q)
 		{
 			
 		}
 		
-		Fp32f(int16_t i) :
-			rawVal((int32_t)i << (q-15))
+		// int16_t is assumed to be Q1.15: keep the best precision shifting right or left
+		fix32(int16_t i) :
+			rawVal(q <= 15 ? (int32_t)i >> (15 - q) : (int32_t)i << (q - 15))
 		{
-			
-		}
 		
-		Fp32f(int32_t i) :
+		}
+
+		fix32(int32_t i) :
 			rawVal(i << q)
 		{
 		
 		}
 		
-		Fp32f(float f) :
+		fix32(float f) :
 			rawVal(FloatToRawFix32<q>(f))
 		{
 		
 		}
 		
-		Fp32f(double f) :
+		fix32(double f) :
 			rawVal(FloatToRawFix32<q>((float)f))
 		{
 		
@@ -240,13 +223,13 @@ namespace Fp
 		
 		// Compound Arithmetic Overloads
 		
-		Fp32f& operator += (Fp32f r)
+		fix32& operator += (fix32 r)
 		{
 			rawVal += r.rawVal;
 			return *this;
 		}
 		
-		Fp32f& operator -= (Fp32f r)
+		fix32& operator -= (fix32 r)
 		{
 			rawVal -= r.rawVal;
 			return *this;
@@ -254,7 +237,7 @@ namespace Fp
 		
 		//! @brief		Overlaod for '*=' operator.
 		//! @details	Uses intermediatary casting to int64_t to prevent overflows.
-		Fp32f& operator *= (Fp32f r)
+		fix32& operator *= (fix32 r)
 		{
 			rawVal = FixMul<q>(rawVal, r.rawVal);
 			return *this;
@@ -262,27 +245,27 @@ namespace Fp
 		
 		//! @brief		Overlaod for '/=' operator.
 		//! @details	Uses intermediatary casting to int64_t to prevent overflows.
-		Fp32f& operator /= (Fp32f r)
+		fix32& operator /= (fix32 r)
 		{
 			rawVal = fixdiv<q>(rawVal, r.rawVal);
 			return *this;
 		}
 		
 		//! @brief		Overlaod for '%=' operator.
-		Fp32f& operator %= (Fp32f r)
+		fix32& operator %= (fix32 r)
 		{
 			rawVal %= r.rawVal;
 			return *this;
 		}
 		
 		
-		Fp32f& operator *= (int32_t r)
+		fix32& operator *= (int32_t r)
 		{
 			rawVal *= r;
 			return *this;
 		}
 		
-		Fp32f& operator /= (int32_t r)
+		fix32& operator /= (int32_t r)
 		{ 
 			rawVal /= r;
 			return *this;
@@ -291,100 +274,104 @@ namespace Fp
 		// Simple Arithmetic Overloads
 		
 		//! @brief		Overload for '-itself' operator.
-		Fp32f operator - () const
+		fix32 operator - () const
 		{
-			Fp32f x;
+			fix32 x;
 			x.rawVal = -rawVal;
 			return x;
 		}
 		
 		//! @brief		Overload for '+' operator.
 		//! @details	Uses '+=' operator.
-		Fp32f operator + (Fp32f r) const
+		fix32 operator + (fix32 r) const
 		{
-			Fp32f x = *this;
+			fix32 x = *this;
 			x += r;
 			return x;
 		}
 		
 		//! @brief		Overload for '-' operator.
 		//! @details	Uses '-=' operator.
-		Fp32f operator - (Fp32f r) const
+		fix32 operator - (fix32 r) const
 		{
-			Fp32f x = *this;
+			fix32 x = *this;
 			x -= r;
 			return x;
 		}
 		
 		//! @brief		Overload for '*' operator.
 		//! @details	Uses '*=' operator.
-		Fp32f operator * (Fp32f r) const
+		fix32 operator * (fix32 r) const
 		{
-			Fp32f x = *this;
+			fix32 x = *this;
 			x *= r;
 			return x;
 		}
 		
 		//! @brief		Overload for '/' operator.
 		//! @details	Uses '/=' operator.
-		Fp32f operator / (Fp32f r) const
+		fix32 operator / (fix32 r) const
 		{
-			Fp32f x = *this;
+			fix32 x = *this;
 			x /= r;
 			return x;
 		}
 		
 		//! @brief		Overload for '%' operator.
 		//! @details	Uses '%=' operator.
-		Fp32f operator % (Fp32f r) const
+		fix32 operator % (fix32 r) const
 		{
-			Fp32f x = *this;
+			fix32 x = *this;
 			x %= r;
 			return x;
 		}
 		
-		// Fp32f-Fp32f Binary Operator Overloads
+		// fix32-fix32 Binary Operator Overloads
 		
-		bool operator == (Fp32f r) const
+		bool operator == (fix32 r) const
 		{
 			return rawVal == r.rawVal;
 		}
 		
-		bool operator != (const Fp32f &r)
+		bool operator != (const fix32 &r)
 		{
 			return !(*this == r);
 		}
 		
-		bool operator <  (const Fp32f &r)
+		bool operator <  (const fix32 &r)
 		{
 			return rawVal < r.rawVal;
 		}
 		
-		bool operator >  (const Fp32f &r)
+		bool operator >  (const fix32 &r)
 		{
 			return rawVal > r.rawVal;
 		}
 		
-		bool operator <= (Fp32f r) const
+		bool operator <= (fix32 r) const
 		{
 			return rawVal <= r.rawVal;
 		}
 		
-		bool operator >= (Fp32f r) const
+		bool operator >= (fix32 r) const
 		{
 			return rawVal >= r.rawVal;
 		}
 		
-		//! @defgroup Explicit "From Fp32f" Conversion Overloads (casts)
+		//! @defgroup Explicit "From fix32" Conversion Overloads (casts)
 		//! @{
 		
-		//! @brief		Conversion operator from fixed-point to int16_t.
-		//! @warning	Possible loss of accuracy from conversion from
-		//!				int32_t to int16_t.
+		//! @brief		Conversion operator from fixed-point to int16_t in Q15.1 format.
+		//! @warning	Possible loss of accuracy from conversion from int32_t to int16_t.
 		operator int16_t()
 		{
-			// Right-shift to get rid of all the decimal bits (truncate)
-			return (int16_t)(rawVal >> (q-15));
+			// Right-shift to get rid of all the extra decimal bits (truncate)
+			//return (int16_t)(rawVal >> (q-15));
+
+			if (q <= 15) 
+				return (int32_t)rawVal << (15 - q);
+			else 
+				return (int32_t)rawVal >> (q - 15);
 		}
 		
 		//! @brief		Conversion operator from fixed-point to int32_t.
@@ -416,33 +403,33 @@ namespace Fp
 		
 		//! @}
 		
-		// Overloads Between Fp32f And int32_t
+		// Overloads Between fix32 And int32_t
 
 		
-		Fp32f operator + (int32_t r) const
+		fix32 operator + (int32_t r) const
 		{
-			Fp32f x = *this;
+			fix32 x = *this;
 			x += r;
 			return x;
 		}
 		
-		Fp32f operator - (int32_t r) const
+		fix32 operator - (int32_t r) const
 		{
-			Fp32f x = *this;
+			fix32 x = *this;
 			x -= r;
 			return x;
 		}
 		
-		Fp32f operator * (int32_t r) const
+		fix32 operator * (int32_t r) const
 		{
-			Fp32f x = *this;
+			fix32 x = *this;
 			x *= r;
 			return x;
 		}
 		
-		Fp32f operator / (int32_t r) const
+		fix32 operator / (int32_t r) const
 		{
-			Fp32f x = *this;
+			fix32 x = *this;
 			x /= r;
 			return x;
 		}
@@ -481,29 +468,29 @@ namespace Fp
 
 	// Specializations for use with plain integers
 
-	//! @note 		Assumes integer has the same precision as Fp32f
+	//! @note 		Assumes integer has the same precision as fix32
 	template <uint8_t q>
-	inline Fp32f<q> operator + (int32_t a, Fp32f<q> b)
+	inline fix32<q> operator + (int32_t a, fix32<q> b)
 	{ 
 		return b + a; 
 	}
 
-	//! @note 		Assumes integer has the same precision as Fp32f
+	//! @note 		Assumes integer has the same precision as fix32
 	template <uint8_t q>
-	inline Fp32f<q> operator - (int32_t a, Fp32f<q> b)
+	inline fix32<q> operator - (int32_t a, fix32<q> b)
 	{
 		return -b + a;
 	}
 
-	//! @note 		Assumes integer has the same precision as Fp32f
+	//! @note 		Assumes integer has the same precision as fix32
 	template <uint8_t q>
-	inline Fp32f<q> operator * (int32_t a, Fp32f<q> b)
+	inline fix32<q> operator * (int32_t a, fix32<q> b)
 	{ return b * a; }
 
 	template <uint8_t q>
-	inline Fp32f<q> operator / (int32_t a, Fp32f<q> b)
+	inline fix32<q> operator / (int32_t a, fix32<q> b)
 	{ 
-		Fp32f<q> r(a); 
+		fix32<q> r(a); 
 		r /= b; 
 		return r;
 	}
@@ -512,121 +499,54 @@ namespace Fp
 	// no default implementation
 
 	template <uint8_t q>
-	inline Fp32f<q> sin(Fp32f<q> a) {
-		static Fp32f<q> factor3 = -1.0 / 6.0;
+	inline fix32<q> sin(fix32<q> a) {
+		static fix32<q> factor3 = -1.0 / 6.0;
 		return a * (1 + factor3*a*a);
 	}
 
 	template <uint8_t q>
-	inline Fp32f<q> psin(Fp32f<q> a) {
-		static Fp32f<q> factor3 = -1.0 / 6.0;
-		static Fp32f<q> factor5 = 1.0 / 120.0;
-		Fp32f<q> a2 = a*a;
-		Fp32f<q> a4 = a2*a2;
+	inline fix32<q> psin(fix32<q> a) {
+		static fix32<q> factor3 = -1.0 / 6.0;
+		static fix32<q> factor5 = 1.0 / 120.0;
+		fix32<q> a2 = a*a;
+		fix32<q> a4 = a2*a2;
 		return a*(1 + factor3*a2 + factor5*a4);
 	}
 
 	template <uint8_t q>
-	inline Fp32f<q> cos(Fp32f<q> a);
+	inline fix32<q> cos(fix32<q> a);
 
 	template <uint8_t q>
-	inline Fp32f<q> sqrt(Fp32f<q> a);
+	inline fix32<q> sqrt(fix32<q> a);
 
 	template <uint8_t q>
-	inline Fp32f<q> rsqrt(Fp32f<q> a);
+	inline fix32<q> rsqrt(fix32<q> a);
 
 	template <uint8_t q>
-	inline Fp32f<q> inv(Fp32f<q> a);
+	inline fix32<q> inv(fix32<q> a);
 
 	template <uint8_t q>
-	inline Fp32f<q> abs(Fp32f<q> a)
+	inline fix32<q> abs(fix32<q> a)
 	{ 
-		Fp32f<q> r; 
+		fix32<q> r; 
 		r.rawVal = a.rawVal > 0 ? a.rawVal : -a.rawVal; 
 		return r; 
 	}
 
-	// Specializations for 16.16 format
-
-	//template <>
-	//inline Fp32f<16> sin(Fp32f<16> a)
-	//{
-	//	Fp32f<16> r;
-	//	r.rawVal = fixsin16(a.rawVal);
-	//	return r;
-	//}
-
-	template <>
-	inline Fp32f<16> cos(Fp32f<16> a)
-	{
-		Fp32f<16> r;
-		r.rawVal = fixcos16(a.rawVal);
-		return r;
-	}
-
-
-	template <>
-	inline Fp32f<16> sqrt(Fp32f<16> a)
-	{
-		Fp32f<16> r;
-		r.rawVal = fixsqrt16(a.rawVal);
-		return r;
-	}
-
-	template <>
-	inline Fp32f<16> rsqrt(Fp32f<16> a)
-	{
-		Fp32f<16> r;
-		r.rawVal = fixrsqrt16(a.rawVal);
-		return r;
-	}
-
-	template <>
-	inline Fp32f<16> inv(Fp32f<16> a)
-	{
-		Fp32f<16> r;
-		r.rawVal = fixinv<16>(a.rawVal);
-		return r;
-	}
-
 	// The multiply accumulate case can be optimized.
 	template <uint8_t q>
-	inline Fp32f<q> multiply_accumulate(
+	inline fix32<q> multiply_accumulate(
 		int32_t count, 
-		const Fp32f<q> *a,
-		const Fp32f<q> *b)
+		const fix32<q> *a,
+		const fix32<q> *b)
 	{
 		long long result = 0;
 		for (int32_t i = 0; i < count; ++i)
 			result += static_cast<long long>(a[i].rawVal) * b[i].rawVal;
-		Fp32f<q> r;
+		fix32<q> r;
 		r.rawVal = static_cast<int32_t>(result >> q);
 		return r;
 	}
-	
-	//===============================================================================================//
-	//======================================== GRAVEYARD ============================================//
-	//===============================================================================================//
-	
-	/*
-	//! @brief		Conversion from fixed-point to float.
-	//! @details	Good for debugging fixed-point arithmetic.
-	//! @warning 	Slow!
-	template <uint8_t q>
-	float Fix32ToFloat(int32_t f)
-	{
-		return (float)f / (1 << q);
-	}
-	
-	//! @brief		Conversion from fixed-point to float.
-	//! @details	Good for debugging fixed-point arithmetic.
-	//! @warning 	Slow!
-	template <uint8_t q>
-	double Fix32ToDouble(int32_t f)
-	{
-		return (double)f / (double)(1 << q);
-	}
-	*/
 
 } // namespace Fp
 

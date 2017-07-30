@@ -67,12 +67,12 @@ namespace Fp
 	}
 	*/
 
-	template <uint8_t q>
-	Fp32f<q> sin(Fp32f<q> a)
-	{
-		static Fp32f<q> factor3 = -1.0 / 6.0;
-		return a * (Fp32f<q>(1) + factor3*a*a);
-	}
+	//template <uint8_t q>
+	//Fp32f<q> sin(Fp32f<q> a)
+	//{
+	//	static Fp32f<q> factor3 = -1.0 / 6.0;
+	//	return a * (Fp32f<q>(1) + factor3*a*a);
+	//}
 
 	int32_t fixrsqrt16(int32_t a)
 	{

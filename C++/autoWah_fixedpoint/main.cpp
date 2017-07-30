@@ -16,6 +16,7 @@ int main(int argc, char* argv[])
 
 	const float maxInt16 = 32767.0f / 32768.0f;
 	const Fp::Fp32f<q> max16(maxInt16);
+	const Fp::Fp32f<q> factor(2*pi);
 
 	while (inputFile.read((char*)&signalIn, sizeof(signalIn)))
 	{
@@ -28,18 +29,19 @@ int main(int argc, char* argv[])
 
 		//signalIn = y * 32768;
 
+		Fp::Fp32f<1> t = 0.5;
+		float tf = 1/t;
+		int16_t t16 = t.rawVal << (15-1);
+		int32_t t32 = t16 >> (15-1);
 		
 		Fp::Fp32f<q> x (signalIn);
-
-		x *= 0.5;
+		Fp::Fp32f<q> y = myWah.runEffect(x);
 
 		// Saturation
-		if (x > max16) x = max16;
-		else if (x < Fp::Fp32f<q>(-1)) x = Fp::Fp32f<q>(-1);
+		if (y > max16) y = max16;
+		else if (y < Fp::Fp32f<q>(-1)) y = Fp::Fp32f<q>(-1);
 
-		float y = x;
-
-		signalIn = x;
+		signalIn = y;
 
 		outputFile.write((char*)&signalIn, sizeof(signalIn));
 	}

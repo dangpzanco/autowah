@@ -16,18 +16,36 @@ autoWah::~autoWah()
 {
 }
 
+//float autoWah::runEffect(float x)
+//{
+//	float xL = x;
+//	if (xL < 0.0f) xL = -xL; // xL = abs(x)
+//
+//	float yL = levelDetector(xL);
+//
+//	//fc = yL * (maxFreq - minFreq) + minFreq;
+//	//f = 2 * std::sin(pi*fc / fs);
+//	
+//
+//	f = 2.0f * autoWah::sin(yL * freqBandwidth + minFreq);
+//	//f = 2.0f * std::sin(yL * freqBandwidth + minFreq);
+//
+//	return stateVariableFilter(x);
+//	//return f;
+//}
+
 float autoWah::runEffect(float x)
 {
-	float xL = x;
-	if (xL < 0.0f) xL = -xL; // xL = abs(x)
+	Fp::Fp32f<FP32Q> xL = x;
+	if (xL.rawVal < 0) xL = -xL; // xL = abs(x)
 
-	float yL = levelDetector(xL);
+	Fp::Fp32f<FP32Q> yL = levelDetector((float)xL);
 
 	//fc = yL * (maxFreq - minFreq) + minFreq;
 	//f = 2 * std::sin(pi*fc / fs);
-	
 
-	f = 2.0f * autoWah::sin(yL * freqBandwidth + minFreq);
+
+	f = 2 * Fp::sin(yL * Fp::Fp32f<FP32Q>(freqBandwidth) + Fp::Fp32f<FP32Q>(minFreq));
 	//f = 2.0f * std::sin(yL * freqBandwidth + minFreq);
 
 	return stateVariableFilter(x);
