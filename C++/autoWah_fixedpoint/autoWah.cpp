@@ -34,18 +34,18 @@ autoWah::~autoWah()
 //	//return f;
 //}
 
-float autoWah::runEffect(float x)
+float autoWah::runEffect(fp::fix32<FIX32Q> x)
 {
-	Fp::Fp32f<FP32Q> xL = x;
+	fp::fix32<FIX32Q> xL = x;
 	if (xL.rawVal < 0) xL = -xL; // xL = abs(x)
 
-	Fp::Fp32f<FP32Q> yL = levelDetector((float)xL);
+	fp::fix32<FIX32Q> yL = levelDetector(xL);
 
 	//fc = yL * (maxFreq - minFreq) + minFreq;
 	//f = 2 * std::sin(pi*fc / fs);
 
 
-	f = 2 * Fp::sin(yL * Fp::Fp32f<FP32Q>(freqBandwidth) + Fp::Fp32f<FP32Q>(minFreq));
+	f = 2 * fp::sin(yL * fp::fix32<FIX32Q>(freqBandwidth) + fp::fix32<FIX32Q>(minFreq));
 	//f = 2.0f * std::sin(yL * freqBandwidth + minFreq);
 
 	return stateVariableFilter(x);
@@ -67,49 +67,49 @@ void autoWah::setFilterType(FilterType type)
 	}
 }
 
-void autoWah::setAttack(float tauA)
+void autoWah::setAttack(fp::fix32<FIX32Q> tauA)
 {
-	autoWah::alphaA = std::exp(-1.0 / (tauA*fs));
-	autoWah::betaA = 1.0f - autoWah::alphaA;
+	autoWah::alphaA = fp::exp<FIX32Q>(-fp::fixinv<FIX32Q>((tauA*fs).rawVal));
+	autoWah::betaA = 1 - autoWah::alphaA;
 }
 
-void autoWah::setRelease(float tauR)
+void autoWah::setRelease(fp::fix32<FIX32Q> tauR)
 {
-	autoWah::alphaR = std::exp(-1.0 / (tauR*fs));
-	autoWah::betaR = 1.0f - autoWah::alphaR;
+	autoWah::alphaR = fp::exp<FIX32Q>(-fp::fixinv<FIX32Q>((tauR*fs).rawVal));
+	autoWah::betaR = 1 - autoWah::alphaR;
 }
 
-void autoWah::setMinMaxFreq(float minFreq, float maxFreq)
+void autoWah::setMinMaxFreq(fp::fix32<FIX32Q> minFreq, fp::fix32<FIX32Q> maxFreq)
 {
-	autoWah::freqBandwidth = pi*(2.0f*maxFreq - minFreq)/fs;
-	autoWah::minFreq = pi*minFreq/fs;
+	autoWah::freqBandwidth = pi_fix32*(2*maxFreq - minFreq)/fs;
+	autoWah::minFreq = pi_fix32*minFreq/fs;
 }
 
-void autoWah::setSampleRate(float fs)
+void autoWah::setSampleRate(fp::fix32<FIX32Q> fs)
 {
 	autoWah::fs = fs;
 }
 
-void autoWah::setQualityFactor(float Q)
+void autoWah::setQualityFactor(fp::fix32<FIX32Q> Q)
 {
 	autoWah::q = Q;
 }
 
-float autoWah::levelDetector(float x)
+fp::fix32<FIX32Q> autoWah::levelDetector(fp::fix32<FIX32Q> x)
 {
-	static float y1 = 0.0f;
-	static float y = 0.0f;
+	static fp::fix32<FIX32Q> y1 = 0.0f;
+	static fp::fix32<FIX32Q> y = 0.0f;
 	
-	float temp = alphaR * y1 + betaR * x;
-	if (x > temp) y1 = x; 
+	fp::fix32<FIX32Q> temp = fp::fix32<FIX32Q>(alphaR) * y1 + fp::fix32<FIX32Q>(betaR) * fp::fix32<FIX32Q>(x);
+	if (fp::fix32<FIX32Q>(x) > temp) y1 = x;
 	else          y1 = temp;
 
-	y = alphaA * y + betaA * y1;
+	y = fp::fix32<FIX32Q>(alphaA) * y + fp::fix32<FIX32Q>(betaA) * y1;
 
 	return y;
 }
 
-float autoWah::stateVariableFilter(float x)
+fp::fix32<FIX32Q> autoWah::stateVariableFilter(fp::fix32<FIX32Q> x)
 {
 	yHighpass  = x - yLowpass - q * yBandpass;
 	yBandpass += f * yHighpass;

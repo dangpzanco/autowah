@@ -1,6 +1,6 @@
 #include <fstream>
 #include "autoWah.h"
-#include "Fp32f.hpp"
+#include "fix32.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -15,8 +15,8 @@ int main(int argc, char* argv[])
 	const uint8_t q = 16;
 
 	const float maxInt16 = 32767.0f / 32768.0f;
-	const Fp::Fp32f<q> max16(maxInt16);
-	const Fp::Fp32f<q> factor(2*pi);
+	const fp::fix32<q> max16(maxInt16);
+	const fp::fix32<q> factor(2*pi);
 
 	while (inputFile.read((char*)&signalIn, sizeof(signalIn)))
 	{
@@ -29,17 +29,17 @@ int main(int argc, char* argv[])
 
 		//signalIn = y * 32768;
 
-		Fp::Fp32f<1> t = 0.5;
+		fp::fix32<1> t = 0.5;
 		float tf = 1/t;
 		int16_t t16 = t.rawVal << (15-1);
 		int32_t t32 = t16 >> (15-1);
 		
-		Fp::Fp32f<q> x (signalIn);
-		Fp::Fp32f<q> y = myWah.runEffect(x);
+		fp::fix32<q> x (signalIn);
+		fp::fix32<q> y = myWah.runEffect(x);
 
 		// Saturation
 		if (y > max16) y = max16;
-		else if (y < Fp::Fp32f<q>(-1)) y = Fp::Fp32f<q>(-1);
+		else if (y < fp::fix32<q>(-1)) y = fp::fix32<q>(-1);
 
 		signalIn = y;
 
