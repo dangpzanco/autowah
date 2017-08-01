@@ -4,7 +4,7 @@
 
 autoWah::autoWah() : 
 	yLowpass(0.0f), yBandpass(0.0f), yHighpass(0.0f), 
-	yFilter(&yBandpass), q(0.2f), f(0.0f), fs(44.1e3)
+	yFilter(&yBandpass), q(0.2f), f(0.0f), fs(44.1), Ts(1.0/44.1)
 {
 	autoWah::setAttack(40e-3);
 	autoWah::setRelease(2e-3);
@@ -69,25 +69,33 @@ void autoWah::setFilterType(FilterType type)
 
 void autoWah::setAttack(fp::fix32<FIX32Q> tauA)
 {
-	autoWah::alphaA = fp::exp<FIX32Q>(-fp::fixinv<FIX32Q>((tauA*fs).rawVal));
+	//autoWah::alphaA = fp::exp<FIX32Q>(-fp::fixinv<FIX32Q>((tauA*fp::fix32<FIX32Q>(fs)).rawVal));
+	//autoWah::alphaA = exp(-1.0f/((float)tauA*fs));
+	autoWah::alphaA = exp(-1e-3f * Ts / (float)tauA);
 	autoWah::betaA = 1 - autoWah::alphaA;
 }
 
 void autoWah::setRelease(fp::fix32<FIX32Q> tauR)
 {
-	autoWah::alphaR = fp::exp<FIX32Q>(-fp::fixinv<FIX32Q>((tauR*fs).rawVal));
+	//autoWah::alphaR = fp::exp<FIX32Q>(-fp::fixinv<FIX32Q>((tauR*fp::fix32<FIX32Q>(fs)).rawVal));
+	autoWah::alphaR = exp(-1e-3f * Ts / (float)tauR);
 	autoWah::betaR = 1 - autoWah::alphaR;
 }
 
 void autoWah::setMinMaxFreq(fp::fix32<FIX32Q> minFreq, fp::fix32<FIX32Q> maxFreq)
 {
-	autoWah::freqBandwidth = pi_fix32*(2*maxFreq - minFreq)/fs;
-	autoWah::minFreq = pi_fix32*minFreq/fs;
+	autoWah::freqBandwidth = pi_fix32 * fp::fix32<FIX32Q>(2*maxFreq - minFreq) / 1000 * fp::fix32<FIX32Q>(Ts);
+	autoWah::minFreq = pi_fix32 * fp::fix32<FIX32Q>(minFreq) / 1000 * fp::fix32<FIX32Q>(Ts);
+	//autoWah::freqBandwidth = pi * (2 * maxFreq - minFreq) / fs;
+	//autoWah::minFreq = pi * minFreq / fs;
+	//autoWah::freqBandwidth = pi * (2 * maxFreq - minFreq) / (1000 * fs);
+	//autoWah::minFreq = pi * minFreq / (1000 * fs);
 }
 
-void autoWah::setSampleRate(fp::fix32<FIX32Q> fs)
+void autoWah::setSampleRate(float fs)
 {
 	autoWah::fs = fs;
+	autoWah::Ts = 1.0f/fs;
 }
 
 void autoWah::setQualityFactor(fp::fix32<FIX32Q> Q)
@@ -111,7 +119,7 @@ fp::fix32<FIX32Q> autoWah::levelDetector(fp::fix32<FIX32Q> x)
 
 fp::fix32<FIX32Q> autoWah::stateVariableFilter(fp::fix32<FIX32Q> x)
 {
-	yHighpass  = x - yLowpass - q * yBandpass;
+	yHighpass  = x - yLowpass - (q * yBandpass);
 	yBandpass += f * yHighpass;
 	yLowpass  += f * yBandpass;
 

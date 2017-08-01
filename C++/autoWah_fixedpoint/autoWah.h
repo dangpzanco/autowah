@@ -29,7 +29,7 @@ public:
 	//void setAttack(int16_t tauA, int16_t maxVal = 1024);
 	//void setRelease(int16_t tauR, int16_t maxVal = 1024);
 	void setMinMaxFreq(fp::fix32<FIX32Q> minFreq, fp::fix32<FIX32Q> maxFreq);
-	void setSampleRate(fp::fix32<FIX32Q> fs);
+	void setSampleRate(float fs);
 	void setQualityFactor(fp::fix32<FIX32Q> Q);
 
 private:
@@ -46,7 +46,8 @@ private:
 	fp::fix32<FIX32Q> minFreq, freqBandwidth;
 
 	// Internal parameters
-	fp::fix32<FIX32Q> f, q, fs;
+	fp::fix32<FIX32Q> f, q;
+	float fs, Ts;
 	fp::fix32<FIX32Q> yHighpass, yBandpass, yLowpass;
 	fp::fix32<FIX32Q> *yFilter;
 

@@ -14,9 +14,13 @@ int main(int argc, char* argv[])
 	autoWah myWah;
 	const uint8_t q = 16;
 
+	myWah.setMinMaxFreq(20, 5000);
+
 	const float maxInt16 = 32767.0f / 32768.0f;
 	const fp::fix32<q> max16(maxInt16);
 	const fp::fix32<q> factor(2*pi);
+
+	float ttt = fp::fix32<FIX32Q>(pi_fix32);
 
 	while (inputFile.read((char*)&signalIn, sizeof(signalIn)))
 	{
@@ -28,18 +32,13 @@ int main(int argc, char* argv[])
 		//else if (y < -1.0f) y = -1.0f;
 
 		//signalIn = y * 32768;
-
-		fp::fix32<1> t = 0.5;
-		float tf = 1/t;
-		int16_t t16 = t.rawVal << (15-1);
-		int32_t t32 = t16 >> (15-1);
 		
 		fp::fix32<q> x (signalIn);
 		fp::fix32<q> y = myWah.runEffect(x);
 
 		// Saturation
-		if (y > max16) y = max16;
-		else if (y < fp::fix32<q>(-1)) y = fp::fix32<q>(-1);
+		//if (y > max16) y = max16;
+		//else if (y < fp::fix32<q>(-1)) y = fp::fix32<q>(-1);
 
 		signalIn = y;
 
