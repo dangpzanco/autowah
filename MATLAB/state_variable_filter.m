@@ -13,7 +13,6 @@ end
 
 f = 2*sin(pi*fc/fs);
 q = 1/Q;
-% q = Q;
 
 yh = x - bufferY(1) - q * bufferY(2);
 yb = f * yh + bufferY(2);
