@@ -36,7 +36,7 @@ void setup() {
      * 96KHz, value = 109  (10500000/96000 = 109)
      */
     TC_Configure(TC1,1,TC_CMR_WAVE|TC_CMR_WAVSEL_UP_RC|TC_CMR_TCCLKS_TIMER_CLOCK2);
-    TC_SetRC(TC1, 1, 656); // sets <> 16 Khz interrupt rate
+    TC_SetRC(TC1, 1, 218); // sets <> 16 Khz interrupt rate
     TC_Start(TC1, 1);
 
     // enable timer interrupts on the timer
@@ -90,7 +90,7 @@ void TC4_Handler()
     //out_DAC0 = map(in_ADC0,0,4095,1,POT2);
     //out_DAC1 = map(in_ADC1,0,4095,1,POT2);
     out_DAC0 = in_ADC0;
-    out_DAC1 = in_ADC1;
+    out_DAC1 = 0;
 
     //Write the DACs
     dacc_set_channel_selection(DACC_INTERFACE, 0);       //select DAC channel 0

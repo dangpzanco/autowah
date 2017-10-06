@@ -31,8 +31,8 @@ void loop()
     POT2=ADC->ADC_CDR[12];                 // read data from ADC10 
      
     //Add volume feature with POT2
-    out_DAC0=map(in_ADC0,0,4095,1,POT2);
-    out_DAC1=map(in_ADC1,0,4095,1,POT2);
+    out_DAC0=0*map(in_ADC0,0,4095,1,POT2);
+    out_DAC1=0*map(in_ADC1,0,4095,1,POT2);
     //out_DAC0 = in_ADC0;
     //out_DAC1 = in_ADC1;
 
