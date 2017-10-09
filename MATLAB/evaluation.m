@@ -72,8 +72,8 @@ for i = 1:lenX
     fc = yL(i) * (max_fc - min_fc) + min_fc;
     
     % State Variable Bandpass Filter
-    xF(i) = x(i);
-%     xF(i) = first_order_filter( x(i), fc, fs )*sqrt(2/Q);
+%     xF(i) = x(i);
+    xF(i) = first_order_filter( x(i), fc, fs )*sqrt(0.5/Q);
 %     xF(i) = x(i)*sqrt(2/Q);
     [~, yF(i)] = state_variable_filter( xF(i), fc, Q, fs );
     
@@ -81,93 +81,94 @@ for i = 1:lenX
     y(i) = mix*yF(i) + (1-mix)*x(i);
 end
 
-audiowrite('out_evaluation.wav', [x,y], fs);
+% audiowrite('out_evaluation.wav', [x,y], fs);
+wavwrite([x,y], fs, 'out_evaluation.wav');
 
-%% Input/Output
+% %% Input/Output
+% % figure
+% % plot(t,x,t,y)
+% % title('Input/Output Signals','interpreter','latex','fontsize',14)
+% % xlabel('Time [s]','interpreter','latex','fontsize',14)
+% % ylabel('Amplitude','interpreter','latex','fontsize',14)
+% % l = {'$$x[n]$$','$$y[n]$$'};
+% % legend(l,'interpreter','latex','fontsize',12,'location','best')
+% % grid on
+% % savefig('input_output.fig')
+% % saveas(gcf,'input_output','epsc')
+% 
+% % figure
+% % subplot(1,2,1)
+% % plot(t,x)
+% % title('Input $$x[n]$$','interpreter','latex','fontsize',14)
+% % xlabel('Time [s]','interpreter','latex','fontsize',14)
+% % ylabel('Amplitude','interpreter','latex','fontsize',14)
+% % axis([t(1),t(end),-2,2])
+% % grid on
+% % 
+% % subplot(1,2,2);
+% % plot(t,y)
+% % title('Output signal ($$y[n]$$)','interpreter','latex','fontsize',14)
+% % xlabel('Time [s]','interpreter','latex','fontsize',14)
+% % ylabel('Amplitude','interpreter','latex','fontsize',14)
+% % axis([t(1),t(end),-2,2])
+% % grid on
+% % 
+% % savefig('input_output.fig')
+% % saveas(gcf,'input_output','epsc')
+
+% %% Level Detector
 % figure
-% plot(t,x,t,y)
-% title('Input/Output Signals','interpreter','latex','fontsize',14)
+% plot(t,env,t,yL)
+% title('Level Detector output','interpreter','latex','fontsize',14)
 % xlabel('Time [s]','interpreter','latex','fontsize',14)
 % ylabel('Amplitude','interpreter','latex','fontsize',14)
-% l = {'$$x[n]$$','$$y[n]$$'};
+% l = {'Envelope of $$x[n]$$','$$y_L[n]$$'};
 % legend(l,'interpreter','latex','fontsize',12,'location','best')
 % grid on
-% savefig('input_output.fig')
-% saveas(gcf,'input_output','epsc')
-
+% savefig('level_detector.fig')
+% saveas(gcf,'level_detector','epsc')
+% 
+% %% Input Time
+% 
 % figure
-% subplot(1,2,1)
 % plot(t,x)
-% title('Input $$x[n]$$','interpreter','latex','fontsize',14)
+% title('Input signal ($$x[n]$$)','interpreter','latex','fontsize',14)
 % xlabel('Time [s]','interpreter','latex','fontsize',14)
 % ylabel('Amplitude','interpreter','latex','fontsize',14)
 % axis([t(1),t(end),-2,2])
 % grid on
+% savefig('input_time.fig')
+% saveas(gcf,'input_time','epsc')
 % 
-% subplot(1,2,2);
+% %% Output Time
+% 
+% figure
 % plot(t,y)
 % title('Output signal ($$y[n]$$)','interpreter','latex','fontsize',14)
 % xlabel('Time [s]','interpreter','latex','fontsize',14)
 % ylabel('Amplitude','interpreter','latex','fontsize',14)
 % axis([t(1),t(end),-2,2])
 % grid on
+% savefig('output_time.fig')
+% saveas(gcf,'output_time','epsc')
 % 
-% savefig('input_output.fig')
-% saveas(gcf,'input_output','epsc')
-
-%% Level Detector
-figure
-plot(t,env,t,yL)
-title('Level Detector output','interpreter','latex','fontsize',14)
-xlabel('Time [s]','interpreter','latex','fontsize',14)
-ylabel('Amplitude','interpreter','latex','fontsize',14)
-l = {'Envelope of $$x[n]$$','$$y_L[n]$$'};
-legend(l,'interpreter','latex','fontsize',12,'location','best')
-grid on
-savefig('level_detector.fig')
-saveas(gcf,'level_detector','epsc')
-
-%% Input Time
-
-figure
-plot(t,x)
-title('Input signal ($$x[n]$$)','interpreter','latex','fontsize',14)
-xlabel('Time [s]','interpreter','latex','fontsize',14)
-ylabel('Amplitude','interpreter','latex','fontsize',14)
-axis([t(1),t(end),-2,2])
-grid on
-savefig('input_time.fig')
-saveas(gcf,'input_time','epsc')
-
-%% Output Time
-
-figure
-plot(t,y)
-title('Output signal ($$y[n]$$)','interpreter','latex','fontsize',14)
-xlabel('Time [s]','interpreter','latex','fontsize',14)
-ylabel('Amplitude','interpreter','latex','fontsize',14)
-axis([t(1),t(end),-2,2])
-grid on
-savefig('output_time.fig')
-saveas(gcf,'output_time','epsc')
-
-%% Intput Spectrum
-figure
-spectrogram(x,blackmanharris(1024),0.25*1024,1024,fs);
-title('Input signal ($$x[n]$$)','interpreter','latex','fontsize',14)
-ylabel('Time [s]','interpreter','latex','fontsize',14)
-xlabel('Frequency [kHz]','interpreter','latex','fontsize',14)
-savefig('input_spectrum.fig')
-saveas(gcf,'input_spectrum','epsc')
-
-%% Output Spectrum
-figure
-spectrogram(y,blackmanharris(1024),0.25*1024,1024,fs);
-title('Output signal ($$y[n]$$)','interpreter','latex','fontsize',14)
-ylabel('Time [s]','interpreter','latex','fontsize',14)
-xlabel('Frequency [kHz]','interpreter','latex','fontsize',14)
-savefig('output_spectrum.fig')
-saveas(gcf,'output_spectrum','epsc')
+% %% Intput Spectrum
+% figure
+% spectrogram(x,blackmanharris(1024),0.25*1024,1024,fs);
+% title('Input signal ($$x[n]$$)','interpreter','latex','fontsize',14)
+% ylabel('Time [s]','interpreter','latex','fontsize',14)
+% xlabel('Frequency [kHz]','interpreter','latex','fontsize',14)
+% savefig('input_spectrum.fig')
+% saveas(gcf,'input_spectrum','epsc')
+% 
+% %% Output Spectrum
+% figure
+% spectrogram(y,blackmanharris(1024),0.25*1024,1024,fs);
+% title('Output signal ($$y[n]$$)','interpreter','latex','fontsize',14)
+% ylabel('Time [s]','interpreter','latex','fontsize',14)
+% xlabel('Frequency [kHz]','interpreter','latex','fontsize',14)
+% savefig('output_spectrum.fig')
+% saveas(gcf,'output_spectrum','epsc')
 
 
 

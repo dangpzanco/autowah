@@ -27,24 +27,35 @@ public:
 	void setMinMaxFreq(float minFreq, float maxFreq);
 	void setSampleRate(float fs);
 	void setQualityFactor(float Q);
+	void setMixing(float alphaMix);
 
 private:
 	float levelDetector(float x);
+	float lowPassFilter(float x);
 	float stateVariableFilter(float x);
+	inline float mixer(float x, float y);
 
 	float sin(float x);
 	float precisionSin(float x);
-	
+
+	// Sin Constants
+	const float sinConst3, sinConst5;
+
 	// Level Detector parameters
 	float alphaA, alphaR, betaA, betaR;
+	float bufferL[2];
+
+	// Lowpass filter parameters
+	float bufferLP, gainLP;
 
 	// State Variable Filter parameters
 	float minFreq, freqBandwidth;
-
-	// Internal parameters
-	float f, q, fs;
+	float q, fs, centerFreq;
 	float yHighpass, yBandpass, yLowpass;
 	float *yFilter;
+
+	// Mixer parameters
+	float alphaMix, betaMix;
 
 };
 
