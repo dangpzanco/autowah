@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 		if (y > maxInt16) y = maxInt16;
 		else if (y < -1.0f) y = -1.0f;
 
-		signalIn = y * 32768;
+		signalIn = (int16_t)(y * 32768.0f);
 		outputFile.write((char*)&signalIn, sizeof(signalIn));
 	}
 	inputFile.close();

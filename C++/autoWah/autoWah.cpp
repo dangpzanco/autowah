@@ -2,16 +2,16 @@
 
 autoWah::autoWah() : 
 	yLowpass(0.0f), yBandpass(0.0f), yHighpass(0.0f), 
-	yFilter(&yBandpass), fs(44.1e3),
-	sinConst3(-1.0f / 6.0f), sinConst5(1.0f / 120.0f),
-	bufferL(), bufferLP(0.0f),
-	alphaMix(0.5f)
+	yFilter(&yBandpass), fs(44.1e3), 
+	sinConst3(-1.0f / 6.0f), sinConst5(1.0f / 120.0f), 
+	tanConst3(1.0f / 3.0f), tanConst5(1.0f / 3.0f),
+	bufferL(), bufferLP(0.0f)
 {
-	autoWah::setAttack(40e-3);
-	autoWah::setRelease(2e-3);
+	autoWah::setAttack(40e-3f);
+	autoWah::setRelease(2e-3f);
 	autoWah::setMinMaxFreq(20, 2500);
 	autoWah::setQualityFactor(1.0f / 5.0f);
-	autoWah::setMixing(1.0f);
+	autoWah::setMixing(0.80f);
 }
 
 
@@ -27,7 +27,6 @@ float autoWah::runEffect(float x)
 	float yL = levelDetector(xL);
 
 	//fc = yL * (maxFreq - minFreq) + minFreq;
-	
 	centerFreq = yL * freqBandwidth + minFreq;
 
 	//float xF = x;
@@ -102,7 +101,8 @@ float autoWah::levelDetector(float x)
 
 float autoWah::lowPassFilter(float x)
 {
-	float K = std::tan(centerFreq);
+	//float K = std::tan(centerFreq);
+	float K = autoWah::tan(centerFreq);
 	float b0 = K / (K + 1);
 	// b1 = b0;
 	// a1 = (K - 1) / (K + 1);
@@ -141,4 +141,16 @@ float autoWah::precisionSin(float x)
 	float x2 = x * x;
 	float x4 = x2 * x2;
 	return x * (1.0f + sinConst3*x2 + sinConst5*x4);
+}
+
+float autoWah::tan(float x)
+{
+	return x * (1.0f + tanConst3*x*x);
+}
+
+float autoWah::precisionTan(float x)
+{
+	float x2 = x * x;
+	float x4 = x2 * x2;
+	return x * (1.0f + tanConst3*x2 + tanConst5*x4);
 }

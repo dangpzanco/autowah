@@ -4,6 +4,7 @@
 #include <cstdint>
 
 const double pi = 3.1415926535897932;
+const float piFloat = 3.1415926535897932f;
 
 enum FilterType {
 	Lowpass,
@@ -37,9 +38,12 @@ private:
 
 	float sin(float x);
 	float precisionSin(float x);
+	float tan(float x);
+	float precisionTan(float x);
 
-	// Sin Constants
+	// Sin and Tan Constants
 	const float sinConst3, sinConst5;
+	const float tanConst3, tanConst5;
 
 	// Level Detector parameters
 	float alphaA, alphaR, betaA, betaR;
