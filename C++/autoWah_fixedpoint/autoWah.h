@@ -26,30 +26,33 @@ public:
 
 	void setAttack(fp::fix32<FIX32Q> tauA);
 	void setRelease(fp::fix32<FIX32Q> tauR);
-	//void setAttack(int16_t tauA, int16_t maxVal = 1024);
-	//void setRelease(int16_t tauR, int16_t maxVal = 1024);
+	
 	void setMinMaxFreq(fp::fix32<FIX32Q> minFreq, fp::fix32<FIX32Q> maxFreq);
 	void setSampleRate(float fs);
 	void setQualityFactor(fp::fix32<FIX32Q> Q);
+	void setMixing(fp::fix32<FIX32Q> alphaMix);
 
 private:
 	fp::fix32<FIX32Q> levelDetector(fp::fix32<FIX32Q> x);
+	fp::fix32<FIX32Q> lowPassFilter(fp::fix32<FIX32Q> x);
 	fp::fix32<FIX32Q> stateVariableFilter(fp::fix32<FIX32Q> x);
-
-	float sin(float x);
-	float precisionSin(float x);
+	inline fp::fix32<FIX32Q> mixer(fp::fix32<FIX32Q> x, fp::fix32<FIX32Q> y);
 	
 	// Level Detector parameters
 	fp::fix32<FIX32Q> alphaA, alphaR, betaA, betaR;
+	fp::fix32<FIX32Q> bufferL[2];
+	float fs, Ts;
+
+	// LowPass Filter parameters
+	fp::fix32<FIX32Q> bufferLP, gainLP;
 
 	// State Variable Filter parameters
-	fp::fix32<FIX32Q> minFreq, freqBandwidth;
-
-	// Internal parameters
-	fp::fix32<FIX32Q> f, q;
-	float fs, Ts;
+	fp::fix32<FIX32Q> minFreq, freqBandwidth, centerFreq, q;
 	fp::fix32<FIX32Q> yHighpass, yBandpass, yLowpass;
 	fp::fix32<FIX32Q> *yFilter;
+
+	// Mixer parameters
+	fp::fix32<FIX32Q> alphaMix, betaMix;
 
 };
 

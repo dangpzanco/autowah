@@ -9,9 +9,9 @@ autoWah::autoWah() :
 {
 	autoWah::setAttack(40e-3f);
 	autoWah::setRelease(2e-3f);
-	autoWah::setMinMaxFreq(20, 2500);
+	autoWah::setMinMaxFreq(20, 3000);
 	autoWah::setQualityFactor(1.0f / 5.0f);
-	autoWah::setMixing(0.80f);
+	autoWah::setMixing(1.0f);
 }
 
 

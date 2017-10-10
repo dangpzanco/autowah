@@ -14,8 +14,6 @@ int main(int argc, char* argv[])
 	autoWah myWah;
 	const uint8_t q = 16;
 
-	myWah.setMinMaxFreq(20, 5000);
-
 	const float maxInt16 = 32767.0f / 32768.0f;
 	const fp::fix32<q> max16(maxInt16);
 	const fp::fix32<q> factor(2*pi);

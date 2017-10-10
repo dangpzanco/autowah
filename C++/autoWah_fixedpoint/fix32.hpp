@@ -1,3 +1,11 @@
+//!
+//! @file 				fix32.hpp (former Fp32f.hpp)
+//! @author 			Geoffrey Hunter <gbmhunter@gmail.com> (www.mbedded.ninja), Markus Trenkwalder
+//! @edited 			Daniel Zanco <dangpzanco@gmail.com>
+//! @created			2012-10-23
+//! @last-modified		2017-10-10
+//! @brief 				Fast 32-bit fixed point library.
+
 /* Original copyright notice
 Copyright (c) 2007, Markus Trenkwalder
 
@@ -433,6 +441,20 @@ namespace fp
 			return x;
 		}
 
+		fix32 operator << (int32_t r) const
+		{
+			fix32 x = *this;
+			x.rawVal <<= r;
+			return x;
+		}
+
+		fix32 operator >> (int32_t r) const
+		{
+			fix32 x = *this;
+			x.rawVal >>= r;
+			return x;
+		}
+
 		bool operator >  (int32_t r) const
 		{
 			return rawVal > (r << q);
@@ -506,24 +528,36 @@ namespace fp
 
 	template <uint8_t q>
 	inline fix32<q> sin(fix32<q> a) {
-		static fix32<q> factor3 = -1.0 / 6.0;
-		return a * (1 + factor3*a*a);
+		static const fix32<q> factor3 = -1.0 / 6.0;
+		return a * ((int32_t)1 + factor3*a*a);
 	}
 
 	template <uint8_t q>
 	inline fix32<q> psin(fix32<q> a) {
-		static fix32<q> factor3 = -1.0 / 6.0;
-		static fix32<q> factor5 = 1.0 / 120.0;
+		static const fix32<q> factor3 = -1.0 / 6.0;
+		static const fix32<q> factor5 = 1.0 / 120.0;
 		fix32<q> a2 = a*a;
 		fix32<q> a4 = a2*a2;
 		return a*(1 + factor3*a2 + factor5*a4);
 	}
 
 	template <uint8_t q>
-	inline fix32<q> cos(fix32<q> a);
+	inline fix32<q> tan(fix32<q> a) {
+		static const fix32<q> factor3 = 1.0 / 3.0;
+		return a * ((int32_t)1 + factor3*a*a);
+	}
 
 	template <uint8_t q>
-	inline fix32<q> sqrt(fix32<q> a);
+	inline fix32<q> sqrt(fix32<q> a) {
+		fix32<q> x = a - fix32<q>(1);
+		fix32<q> x2 = x * x;
+		//fix32<q> y = fix32<q>(1) + (x2 >> 1) - (x3 >> 3) + (x4 >> 4);
+		fix32<q> y = fix32<q>(1) + x * (fix32<q>(0.5f) - (x >> 3) + (x2 >> 4));
+		return y;
+	}
+
+	template <uint8_t q>
+	inline fix32<q> cos(fix32<q> a);
 
 	template <uint8_t q>
 	inline fix32<q> rsqrt(fix32<q> a);
