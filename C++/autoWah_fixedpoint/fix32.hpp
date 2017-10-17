@@ -6,6 +6,8 @@
 //! @last-modified		2017-10-10
 //! @brief 				Fast 32-bit fixed point library.
 
+// Source: https://github.com/mbedded-ninja/MFixedPoint
+
 /* Original copyright notice
 Copyright (c) 2007, Markus Trenkwalder
 

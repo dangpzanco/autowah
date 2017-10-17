@@ -12,12 +12,8 @@ a = pot_limits(2) - pot_limits(1);
 
 N = 1024;
 pot = linspace(0,1,N);
-% pot_scale = a * pot + b;
-pot_scale = exp(-1./(fs * pot));
-
-% b_log = log10(pot_limits(1)/pot_limits(2))/(pot_scale(1) - pot_scale(end));
-% a_log = pot_limits(1)/exp(b_log * pot_scale(1));
-% pot_log = a_log * exp(b_log * pot_scale);
+pot_scale = a*pot + b;
+% pot_scale = exp(-1./(fs * pot));
 
 tau = -1./(fs*log(pot_scale));
 

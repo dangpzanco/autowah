@@ -78,8 +78,8 @@ void autoWah::setRelease(fp::fix32<FIX32Q> tauR)
 
 void autoWah::setMinMaxFreq(fp::fix32<FIX32Q> minFreq, fp::fix32<FIX32Q> maxFreq)
 {
-	autoWah::freqBandwidth = pi_fix32 * fp::fix32<FIX32Q>(2*maxFreq - minFreq) / 1000 * fp::fix32<FIX32Q>(Ts);
-	autoWah::minFreq = pi_fix32 * fp::fix32<FIX32Q>(minFreq) / 1000 * fp::fix32<FIX32Q>(Ts);
+	autoWah::freqBandwidth = fp::fix32<FIX32Q>(2*maxFreq - minFreq) / 1000 * fp::fix32<FIX32Q>(Ts);
+	autoWah::minFreq = fp::fix32<FIX32Q>(minFreq) / 1000 * fp::fix32<FIX32Q>(Ts);
 	//autoWah::freqBandwidth = pi * (2 * maxFreq - minFreq) / fs;
 	//autoWah::minFreq = pi * minFreq / fs;
 	//autoWah::freqBandwidth = pi * (2 * maxFreq - minFreq) / (1000 * fs);
@@ -121,9 +121,10 @@ fp::fix32<FIX32Q> autoWah::lowPassFilter(fp::fix32<FIX32Q> x)
 	//float K = std::tan(pi * fc / fs);
 	// b1 = b0 = K / (K + 1);
 	// a1 = (K - 1) / (K + 1);
-	fp::fix32<FIX32Q> K = fp::tan(centerFreq);
+	fp::fix32<FIX32Q> K = fp::tan(pi_fix32 * centerFreq);
 	fp::fix32<FIX32Q> b0 = K / (K + 1);
-	fp::fix32<FIX32Q> a1 = 2 * (b0 - fp::fix32<FIX32Q>(0.5f));
+	//fp::fix32<FIX32Q> a1 = 2 * (b0 - fp::fix32<FIX32Q>(0.5f));
+	fp::fix32<FIX32Q> a1 = (b0 - fp::fix32<FIX32Q>(0.5f)) << 1;
 
 	fp::fix32<FIX32Q> xh = x - a1 * bufferLP;
 	fp::fix32<FIX32Q> y = b0 * (xh + bufferLP);
@@ -134,7 +135,7 @@ fp::fix32<FIX32Q> autoWah::lowPassFilter(fp::fix32<FIX32Q> x)
 
 fp::fix32<FIX32Q> autoWah::stateVariableFilter(fp::fix32<FIX32Q> x)
 {
-	fp::fix32<FIX32Q> f = fp::sin(centerFreq) << 1;
+	fp::fix32<FIX32Q> f = fp::sin(pi_fix32 * centerFreq) << 1;
 	yHighpass  = x - yLowpass - (q * yBandpass);
 	yBandpass += f * yHighpass;
 	yLowpass  += f * yBandpass;
