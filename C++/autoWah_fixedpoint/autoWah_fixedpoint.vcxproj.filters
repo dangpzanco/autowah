@@ -21,15 +21,9 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Fp32f.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="autoWah.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Fp32f.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="fix32.hpp">

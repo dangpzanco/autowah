@@ -96,7 +96,7 @@ void autoWah::setQualityFactor(fp::fix32<FIX32Q> Q)
 {
 	autoWah::q = Q;
 	//autoWah::gainLP = std::sqrt((float)(q >> 2));
-	autoWah::gainLP = fp::sqrt(q >> 2);
+	autoWah::gainLP = fp::sqrt(autoWah::q >> 2);
 }
 
 void autoWah::setMixing(fp::fix32<FIX32Q> alphaMix)

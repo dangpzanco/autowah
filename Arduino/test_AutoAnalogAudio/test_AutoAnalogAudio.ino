@@ -1,6 +1,10 @@
 #include <AutoAnalogAudio.h>
+#include <autoWah.h>
+#include <fix32.hpp>
 
 AutoAnalog aaAudio;
+autoWah myWah;
+const uint8_t q = 16;
 
 // int32_t bufferSize = MAX_BUFFER_SIZE; // bad size
 // int32_t bufferSize = 32; // good size
@@ -28,7 +32,8 @@ void setup() {
     aaAudio.dacBitsPerSample = 12;
     
     // Set a 16kHz sample rate
-    aaAudio.setSampleRate(48000);
+    aaAudio.setSampleRate(44100);
+    // aaAudio.setSampleRate(16000);
 
     // Set ADC channel
     // aaAudio.enableAdcChannel(0);
@@ -38,6 +43,12 @@ void setup() {
     // Start loading ADC buffers
     aaAudio.getADC(bufferSize);
     aaAudio.feedDAC(dacChannel, bufferSize);
+
+    // Setup autoWah
+    myWah.setSampleRate(44.1);
+
+    // Debug
+    // Serial.begin(250000);
 }
 
 /*********************************************************/
@@ -50,7 +61,14 @@ void loop() {
 
     // Pass-through
     for(int i = 0; i < bufferSize; i++){
-        aaAudio.dacBuffer16[i] = aaAudio.adcBuffer16[i];
+        fp::fix32<q> x ((int16_t)((aaAudio.adcBuffer16[i]-2048) << 4));
+        fp::fix32<q> y = myWah.runEffect(x);
+        // aaAudio.dacBuffer16[i] = aaAudio.adcBuffer16[i];
+        aaAudio.dacBuffer16[i] = (uint16_t)(((int16_t)y >> 4)+2048);
+
+        // fp::fix32<q> x = (int16_t)aaAudio.adcBuffer16[i];
+        // fp::fix32<q> y = myWah.runEffect(x);
+        // aaAudio.dacBuffer16[i] = (uint16_t)((int16_t)y);
     }
     
     // Pass-through
@@ -58,7 +76,21 @@ void loop() {
     //    aaAudio.dacBuffer16[i] = aaAudio.adcBuffer16[i];
     //    aaAudio.dacBuffer16[i + 1] = aaAudio.adcBuffer16[i + 1];
     // }
-    
+
+    // Debug
+    // for(int i = 0; i < bufferSize; i++){
+    //     fp::fix32<q> x ((int16_t)((aaAudio.adcBuffer16[i]-2048) << 4));
+    //     fp::fix32<q> y = myWah.runEffect(x);
+    //     aaAudio.dacBuffer16[i] = (int16_t)y >> 4;
+
+    //     // Serial.print((int16_t)((aaAudio.adcBuffer16[i]-2048) << 4));
+    //     // Serial.print(",");
+    //     // Serial.println((int16_t)y);
+
+    //     Serial.print(aaAudio.adcBuffer16[i]);
+    //     Serial.print(",");
+    //     Serial.println( (uint16_t)(((int16_t)y >> 4)+2048) );
+    // }
     // Output
     aaAudio.feedDAC(dacChannel, bufferSize);
     

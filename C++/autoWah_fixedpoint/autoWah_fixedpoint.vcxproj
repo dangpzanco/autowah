@@ -23,7 +23,7 @@
     <ProjectGuid>{2865A7C9-AC36-4931-B69F-09F0C50EEF2D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>autoWah_fixedpoint</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -140,13 +140,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="autoWah.cpp" />
-    <ClCompile Include="Fp32f.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="autoWah.h" />
     <ClInclude Include="fix32.hpp" />
-    <ClInclude Include="Fp32f.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

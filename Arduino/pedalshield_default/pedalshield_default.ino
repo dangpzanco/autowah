@@ -18,6 +18,8 @@ void setup()
     //DAC Configuration
     analogWrite(DAC0,0);  // Enables DAC0
     analogWrite(DAC1,0);  // Enables DAC0
+
+    Serial.begin(115200);
 }
  
 void loop()
@@ -31,10 +33,12 @@ void loop()
     POT2=ADC->ADC_CDR[12];                 // read data from ADC10 
      
     //Add volume feature with POT2
-    out_DAC0=0*map(in_ADC0,0,4095,1,POT2);
-    out_DAC1=0*map(in_ADC1,0,4095,1,POT2);
-    //out_DAC0 = in_ADC0;
-    //out_DAC1 = in_ADC1;
+    // out_DAC0=0*map(in_ADC0,0,4095,1,POT2);
+    // out_DAC1=0*map(in_ADC1,0,4095,1,POT2);
+    out_DAC0 = in_ADC0;
+    out_DAC1 = in_ADC1;
+
+    Serial.println(in_ADC0);
 
     //Write the DACs
     dacc_set_channel_selection(DACC_INTERFACE, 0);       //select DAC channel 0

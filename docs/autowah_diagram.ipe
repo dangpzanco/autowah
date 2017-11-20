@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70206" creator="Ipe 7.2.7">
-<info created="D:20170920163120" modified="D:20170925142422"/>
+<info created="D:20170920163120" modified="D:20171117175206"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -220,13 +220,13 @@ h
 <dashstyle name="dash dotted" value="[4 2 1 2] 0"/>
 <dashstyle name="dash dot dotted" value="[4 2 1 2 1 2] 0"/>
 <textsize name="large" value="\large"/>
-<textsize name="small" value="\small"/>
-<textsize name="tiny" value="\tiny"/>
 <textsize name="Large" value="\Large"/>
 <textsize name="LARGE" value="\LARGE"/>
 <textsize name="huge" value="\huge"/>
 <textsize name="Huge" value="\Huge"/>
+<textsize name="small" value="\small"/>
 <textsize name="footnote" value="\footnotesize"/>
+<textsize name="tiny" value="\tiny"/>
 <textstyle name="center" begin="\begin{center}" end="\end{center}"/>
 <textstyle name="itemize" begin="\begin{itemize}" end="\end{itemize}"/>
 <textstyle name="item" begin="\begin{itemize}\item{}" end="\end{itemize}"/>
@@ -336,11 +336,7 @@ h
 240 668 l
 </path>
 <text matrix="1 0 0 1 -44 20" transformations="translations" pos="280 628" stroke="black" type="label" width="22.363" height="7.473" depth="2.49" halign="right" valign="baseline" style="math">y_L[n]</text>
-<path stroke="black" arrow="normal/normal">
-96 688 m
-200 688 l
-</path>
-<path stroke="black" arrow="normal/normal">
+<path matrix="1.66667 0 0 1 -90.6667 -0" stroke="black" arrow="normal/normal">
 112 688 m
 112 620 l
 136 620 l
@@ -350,18 +346,49 @@ h
 320 688 l
 </path>
 <path stroke="black" arrow="normal/normal">
-160 688 m
-160 720 l
-344 720 l
-344 700 l
-</path>
-<path stroke="black" arrow="normal/normal">
 368 688 m
 400 688 l
 </path>
-<text transformations="translations" pos="112 692" stroke="black" type="label" width="17.209" height="7.473" depth="2.49" valign="baseline" style="math">x[n]</text>
+<text matrix="1 0 0 1 -40 0" transformations="translations" pos="112 692" stroke="black" type="label" width="17.209" height="7.473" depth="2.49" valign="baseline" style="math">x[n]</text>
 <text transformations="translations" pos="176 692" stroke="black" type="label" width="23.832" height="7.473" depth="2.49" halign="center" valign="baseline" style="math">x_F[n]</text>
 <text transformations="translations" pos="296 692" stroke="black" type="label" width="23.022" height="7.473" depth="2.49" halign="center" valign="baseline" style="math">y_F[n]</text>
 <text transformations="translations" pos="380 692" stroke="black" type="label" width="16.757" height="7.473" depth="2.49" halign="center" valign="baseline" style="math">y[n]</text>
+<path matrix="0.75 0 0 0.375 -80 436" stroke="black" fill="lightgray" pen="heavier">
+256 688
+256 704
+272 704
+288 704
+304 704
+320 704
+320 688
+320 672
+320 656
+320 640
+304 640
+288 640
+272 640
+256 640
+256 656
+256 672
+256 688
+256 688 u
+</path>
+<text matrix="1 0 0 1 -208 28" transformations="translations" pos="344 656" stroke="black" type="label" width="44.029" height="6.918" depth="0" halign="center" valign="baseline">Normalize</text>
+<path matrix="1.66666 0 0 0.00000412 -26.6657 687.997" stroke="black" arrow="normal/normal">
+112 688 m
+112 620 l
+136 620 l
+</path>
+<path matrix="1.66666 0 0 0.00000412 -114.666 687.997" stroke="black" arrow="normal/normal">
+112 688 m
+112 620 l
+136 620 l
+</path>
+<path stroke="black" arrow="normal/normal">
+96 688 m
+96 720 l
+344 720 l
+344 700 l
+</path>
 </page>
 </ipe>
