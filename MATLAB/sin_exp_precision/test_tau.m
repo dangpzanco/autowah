@@ -4,7 +4,8 @@ clearvars
 
 fs = 48e3;
 
-tau_limits = [1e-3, 1];
+% tau_limits = [1e-3, 1];
+tau_limits = [5e-3, 200e-3];
 pot_limits = exp(-1./(fs * tau_limits))
 
 b = min(pot_limits);

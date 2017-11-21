@@ -18,14 +18,14 @@ const int32_t minBW = 0.01 * 32768;
 const int32_t maxBW = 0.7 * 32768;
 
 // Attack
-const int32_t minAtk = 32092;
-const int32_t maxAtk = 32767;
+const int32_t minAtk = 32630;
+const int32_t maxAtk = 32760;
 
 // Release
-// const int32_t minRel = 32092;
-// const int32_t maxRel = 32767;
-const int32_t minRel = 1000;
+const int32_t minRel = 32092;
 const int32_t maxRel = 32767;
+// const int32_t minRel = 1000;
+// const int32_t maxRel = 32767;
 
 
 const int toggleBufferSize = 10;
@@ -142,7 +142,7 @@ void updatePot(int16_t leftPOT, int16_t middlePOT, int16_t rightPOT) {
 
         fp::fix32<q> alphaA = (int16_t)map(atk, 0, 4095, minAtk, maxAtk);
         fp::fix32<q> alphaR = (int16_t)map(rel, 0, 4095, minRel, maxRel);
-        // myWah.setAlphaA(alphaA);
+        myWah.setAlphaA(alphaA);
         myWah.setAlphaR(alphaR);
     }
     else{
