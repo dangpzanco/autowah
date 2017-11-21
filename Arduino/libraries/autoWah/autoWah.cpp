@@ -15,8 +15,8 @@ autoWah::autoWah() :
 
 	// Modifications
 	autoWah::setSampleRate(44.1);
-	autoWah::setAttack(40e-3f);
-	autoWah::setRelease(5e-3f);
+	autoWah::setAttack(20e-3f);
+	autoWah::setRelease(10e-3f);
 	autoWah::setMinMaxFreq((int32_t)20, (int32_t)3000);
 	autoWah::setQualityFactor(1.0f / 5.0f);
 	autoWah::setMixing(1.0f);
@@ -81,7 +81,8 @@ void autoWah::setRelease(fp::fix32<FIX32Q> tauR)
 void autoWah::setAlphaA(fp::fix32<FIX32Q> alphaA)
 {
 	autoWah::alphaA = alphaA;
-	autoWah::betaA = (int32_t)1 - autoWah::alphaA;
+	// autoWah::betaA = (int32_t)1 - autoWah::alphaA;
+	autoWah::betaA = ((int32_t)1 - autoWah::alphaA) << (int32_t)1;
 }
 
 void autoWah::setAlphaR(fp::fix32<FIX32Q> alphaR)
@@ -115,7 +116,8 @@ void autoWah::setQualityFactor(fp::fix32<FIX32Q> Q)
 {
 	autoWah::q = Q;
 	//autoWah::gainLP = std::sqrt((float)(q >> 2));
-	autoWah::gainLP = fp::sqrt(autoWah::q >> (int32_t)2);
+	// autoWah::gainLP = fp::sqrt(autoWah::q >> (int32_t)2);
+	autoWah::gainLP = fp::sqrt(autoWah::q >> (int32_t)1);
 }
 
 void autoWah::setMixing(fp::fix32<FIX32Q> alphaMix)
@@ -131,6 +133,7 @@ fp::fix32<FIX32Q> autoWah::levelDetector(fp::fix32<FIX32Q> x)
 	else          bufferL[1] = y1;
 
 	bufferL[0] = alphaA * bufferL[0] + betaA * bufferL[1];
+	// bufferL[0] = bufferL[0] << (int32_t)1;
 
 	return bufferL[0];
 }
