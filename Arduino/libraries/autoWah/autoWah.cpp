@@ -40,6 +40,7 @@ float autoWah::runEffect(fp::fix32<FIX32Q> x)
 	centerFreq = yL * freqBandwidth + minFreq;
 
 	fp::fix32<FIX32Q> xF = lowPassFilter(x);
+	// fp::fix32<FIX32Q> xF = x;
 	fp::fix32<FIX32Q> yF = stateVariableFilter(xF);
 
 	fp::fix32<FIX32Q> y = mixer(x, yF);
@@ -75,6 +76,23 @@ void autoWah::setRelease(fp::fix32<FIX32Q> tauR)
 	//autoWah::alphaR = fp::exp<FIX32Q>(-fp::fixinv<FIX32Q>((tauR*fp::fix32<FIX32Q>(fs)).rawVal));
 	autoWah::alphaR = exp(-1e-3f * Ts / (float)tauR);
 	autoWah::betaR = (int32_t)1 - autoWah::alphaR;
+}
+
+void autoWah::setAlphaA(fp::fix32<FIX32Q> alphaA)
+{
+	autoWah::alphaA = alphaA;
+	autoWah::betaA = (int32_t)1 - autoWah::alphaA;
+}
+
+void autoWah::setAlphaR(fp::fix32<FIX32Q> alphaR)
+{
+	autoWah::alphaR = alphaR;
+	autoWah::betaR = (int32_t)1 - autoWah::alphaR;
+}
+
+void autoWah::setBandwidth(fp::fix32<FIX32Q> bw)
+{
+	autoWah::freqBandwidth = bw;
 }
 
 void autoWah::setMinMaxFreq(fp::fix32<FIX32Q> minFreq, fp::fix32<FIX32Q> maxFreq)

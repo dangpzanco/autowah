@@ -33,6 +33,9 @@ public:
 
 	void setAttack(fp::fix32<FIX32Q> tauA);
 	void setRelease(fp::fix32<FIX32Q> tauR);
+	void setAlphaA(fp::fix32<FIX32Q> alphaA);
+	void setAlphaR(fp::fix32<FIX32Q> alphaR);
+	void setBandwidth(fp::fix32<FIX32Q> bw);
 	
 	void setMinMaxFreq(fp::fix32<FIX32Q> minFreq, fp::fix32<FIX32Q> maxFreq);
 	void setSampleRate(float fs);
