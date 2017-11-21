@@ -49,9 +49,9 @@ for ff = 1:numFreqs
     for i = 1:lenX
         
         % Variable cutoff frequency
-%         fc = freqs(ff);
-        fc = 300;
-        Q = quality(ff);
+        fc = freqs(ff);
+%         fc = 300;
+%         Q = quality(ff);
 
         % State Variable Bandpass Filter
 %         xF(i) = x(i);
@@ -93,8 +93,8 @@ magdb = 20*log10(abs(outSpectrum)) - 20*log10(repmat(abs(inSpectrum),[1,numFreqs
 round_factor = 1;
 % l = strtrim(cellstr(num2str(round(freqs'/10^-n)*10^-n))');
 for i = 1:numFreqs
-%     l{i} = [num2str(round(freqs(i)*10^n)*10^-n) 'Hz'];
-    l{i} = ['Q = ' num2str(round(quality(i)*10^round_factor)*10^-round_factor)];
+    l{i} = [num2str(round(freqs(i)*10^round_factor)*10^-round_factor) 'Hz'];
+%     l{i} = ['Q = ' num2str(round(quality(i)*10^round_factor)*10^-round_factor)];
 end
 
 
@@ -107,8 +107,8 @@ grid on
 
 figure
 semilogx(2*f,magdb)
-% axis([10,10e3,-60,20])
-axis([10,10e3,1.5*min(reshape(magdb(10 < 2*f & 2*f < 10e3,:),1,[])),1.1*max(magdb(:))])
+axis([10,10e3,-60,20])
+% axis([10,10e3,1.5*min(reshape(magdb(10 < 2*f & 2*f < 10e3,:),1,[])),1.1*max(magdb(:))])
 legend(l,'location','southwest')
 xlabel('Frequency [Hz]')
 ylabel('Magnitude [dB]')
