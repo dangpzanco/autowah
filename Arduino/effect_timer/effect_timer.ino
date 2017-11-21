@@ -6,6 +6,7 @@ const uint8_t q = 16;
 const double maxInt16 = 32767.0 / 32768.0;
 const fp::fix32<q> max16(maxInt16);
 const fp::fix32<q> min16(-1.0);
+const fp::fix32<q> half(0.5);
 // const fp::fix32<q> minQ(0.02);
 
 // Quality Factor
@@ -21,8 +22,11 @@ const int32_t minAtk = 32092;
 const int32_t maxAtk = 32767;
 
 // Release
-const int32_t minRel = 32092;
+// const int32_t minRel = 32092;
+// const int32_t maxRel = 32767;
+const int32_t minRel = 1000;
 const int32_t maxRel = 32767;
+
 
 const int toggleBufferSize = 10;
 
@@ -138,7 +142,8 @@ void updatePot(int16_t leftPOT, int16_t middlePOT, int16_t rightPOT) {
 
         fp::fix32<q> alphaA = (int16_t)map(atk, 0, 4095, minAtk, maxAtk);
         fp::fix32<q> alphaR = (int16_t)map(rel, 0, 4095, minRel, maxRel);
-        myWah.setAlphaAR(alphaA, alphaR);
+        // myWah.setAlphaA(alphaA);
+        myWah.setAlphaR(alphaR);
     }
     else{
         // range = analogRead(A8);
@@ -193,7 +198,11 @@ void TC4_Handler()
     }
 
     // Run Effect
-    fp::fix32<q> x ((int16_t)(((int16_t)in_ADC0 - 2048) << 4));
+    // fp::fix32<q> x ((int16_t)(((int16_t)in_ADC0 - 2048) << 4));
+
+    fp::fix32<q> x0 ((int16_t)(((int16_t)in_ADC0 - 2048) << 4));
+    fp::fix32<q> x1 ((int16_t)(((int16_t)in_ADC1 - 2048) << 4));
+    fp::fix32<q> x = (x0 - x1) * half;
     fp::fix32<q> y = myWah.runEffect(x);
 
     // Gain
@@ -204,8 +213,8 @@ void TC4_Handler()
     else if (y < min16) y = min16;
 
     out_DAC0 = (uint32_t)(((int16_t)y >> 4)+2048);
-    // out_DAC1 = (uint32_t)(((int16_t)-y >> 4)+2048);
-    out_DAC1 = 0;
+    out_DAC1 = (uint32_t)(((int16_t)-y >> 4)+2048);
+    // out_DAC1 = 0;
 
     //Write the DACs
     dacc_set_channel_selection(DACC_INTERFACE, 0);       //select DAC channel 0
